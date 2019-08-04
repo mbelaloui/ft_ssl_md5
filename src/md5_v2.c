@@ -5,75 +5,98 @@
 #include <stdint.h>
 
 
-typedef struct	s_md5
+#define H0 0x67452301
+#define H1 0xefcdab89
+#define H2 0x98badcfe
+#define H3 0x10325476
+
+typedef struct		s_md5
 {
-	uint32_t	size_input_msg;
-	uint32_t	size_prepared_msg;
-	uint32_t	total_size_msg;
-	uint8_t	*input_msg;
-	uint8_t	*prepared_msg;
-}		t_md5;
+	uint64_t	size_input_msg;
+	uint64_t	size_prepared_msg;
+	uint64_t	total_size_msg;
+	uint8_t		*input_msg;
+	uint8_t		*prepared_msg;
+}			t_md5;
 
 
-typedef struct                  s_buffer_md5
+typedef struct		s_buffer_md5
 {
-	uint32_t a;
-	uint32_t b;
-	uint32_t c;
-	uint32_t d;
-	uint32_t r[64];
-	uint32_t k[64];
+	uint32_t	a;
+	uint32_t	b;
+	uint32_t	c;
+	uint32_t	d;
+	uint32_t	*pt;
+	uint32_t	f;
+	uint32_t	g;
+	uint32_t	r[64];
+	uint32_t	k[64];
 
-}                               t_buffer_md5;
+}			t_buffer_md5;
 
+typedef struct		s_general
+{
+	char		p;
+	char		q;
+	char		r;
+	char		s;
+	char		*cmd;
+	char		**url_file;  // a revoir ce type
+}			t_general;
+
+
+
+int		ft_strcmp(const char *str1, const char *str2)
+{
+/*	uint64_t *a;
+	uint64_t *b;
+
+	a = (uint64_t)str1;
+	b = (uint64_t)str2;*/
+	while (*str1 || *str2)
+	{
+		if (str1 != str2)
+			return (str1 - str2);
+		str1++;
+		str2++;
+	}
+	return (0);
+}
+
+
+
+/*
 
 typedef struct s_option
 {
 	int	p;
 }		t_opt;
-
-unsigned int ft_F(t_buffer_md5 buf)
+*/
+void	ft_F(t_buffer_md5 *buf, int i)
 {
-	return ((buf.b & buf.c) | ((~buf.b) & buf.d));
+	buf->f =((buf->b & buf->c) | ((~buf->b) & buf->d));
+	buf->g = i;
 }
 
-
-unsigned int ft_g_1(int i)
-{
-	return (i);
-}
 /**************************************************************************88*/
-unsigned int ft_G(t_buffer_md5 buf)
+void	ft_G(t_buffer_md5 *buf, int i)
 {
-	return (  (buf.d & buf.b) | (buf.c & (~buf.d)) );
+	buf->f =  (  (buf->d & buf->b) | (buf->c & (~buf->d)) );
+	buf->g = ((5 * i + 1) % 16 );
 }
 
-
-unsigned int ft_g_2(int i)
-{
-	return ((5 * i + 1) % 16 );
-}
 /**************************************************************************88*/
-unsigned int ft_H(t_buffer_md5 buf)
+void	ft_H(t_buffer_md5 *buf, int i)
 {
-	return (buf.b ^ buf.c ^ buf.d);
+	buf->f = (buf->b ^ buf->c ^ buf->d);
+	buf->g = ((3 * i + 5) % 16);
 }
 
-
-unsigned int ft_g_3(int i)
-{
-	return ((3 * i + 5) % 16);
-}
 /**************************************************************************88*/
-unsigned int ft_I(t_buffer_md5 buf)
+void	ft_I(t_buffer_md5 *buf, int i)
 {
-	return (buf.c ^ (buf.b | (~buf.d)));
-}
-
-
-unsigned int ft_g_4(int i)
-{
-	return ((7 * i) % 16);
+	buf->f = (buf->c ^ (buf->b | (~buf->d)));
+	buf->g = ((7 * i) % 16);
 }
 /**************************************************************************88*/
 size_t ft_strlen(uint8_t *str)
@@ -86,42 +109,6 @@ size_t ft_strlen(uint8_t *str)
 			ret ++;
 	return (ret);
 }
-
-void	put_struct(t_md5 *md5)
-{
-	printf("msg [%s]    norm len = [%zd byts]\n", md5->input_msg, md5->size_prepared_msg);
-	printf("add the 64 bits [ 8 byts ] to the len \n");
-
-
-	printf("msg [%s] size_message [%zd byts]  size_information = [%zd byts]\n",
-			md5->input_msg, md5->total_size_msg,  md5->size_prepared_msg /*new_len_msg*/);
-
-
-	printf("%s\n", md5->input_msg);
-}
-
-
-int     get_norm_len_message(size_t initial_len)
-{
-	//add a description of this function
-
-	size_t ret;
-
-	ret = (initial_len * 8);
-	printf("byts len [%zd]\n", initial_len);
-	printf("bits len  [%zd] \n", ret);
-	printf("add the bits at the end \n");
-	ret += 1;
-	printf("bits len  [%zd] \n", ret);
-
-	while ((ret % 512) != 448)
-		ret++;
-	//ret += 64;
-	printf("normalized bits len ==> [%zd]\n",  ret );
-	//printf( "len in word = [%d]\n", (ret / 8));
-	return (ret / 8);
-}
-
 
 //void	print_block_64(unsigned char* msg)
 void	print_block_64(uint8_t* msg)
@@ -138,8 +125,10 @@ void	print_block_64(uint8_t* msg)
 }
 
 //void	print_abcd(unsigned int h0, unsigned int h1, unsigned int h2, unsigned int h3)
-void	print_register(t_buffer_md5 buf)
+void	print_register(t_buffer_md5 buf, int round)
 {
+
+	printf("Round %d\n", round);
 	/* ********************************************** */
 	uint8_t *p;
 	p = (uint8_t *)&buf.a;
@@ -153,6 +142,8 @@ void	print_register(t_buffer_md5 buf)
 
 	p = (uint8_t *)&buf.d;
 	printf("D [%2.2x %2.2x %2.2x %2.2x]\n", p[0], p[1], p[2], p[3]);
+
+	printf("\t\t\t----------------------\n");
 }
 
 
@@ -231,7 +222,6 @@ int     get_size_message_512(size_t initial_len)
 	size_t ret;
 
 	ret = (initial_len * 8);
-	printf("Initial message len %zd bits\t", ret);
 	ret += 1;
 	while ((ret % 512) != 448)
 		ret++;
@@ -251,21 +241,22 @@ void	init_md5(t_md5 *md5, char *input)
 	md5->size_prepared_msg = get_size_message_512(md5->size_input_msg);
 	md5->total_size_msg = md5->size_prepared_msg + 8;
 	if (1 == 1)
-		printf("Final size = %u bits \n", md5->total_size_msg * 8);
+		printf("Initial message len %ld bits\tFinal size = %ld bits \n",
+			       md5->size_input_msg * 8, md5->total_size_msg * 8);
 	get_new_message(md5);
-
-	exit(0);
+	if (!md5->prepared_msg)
+	{
+		printf("erreur malloc");
+		exit(0);
+	}
 }
 
-
-void	ft_md5(t_md5	*md5)
+void	swap_byts(t_buffer_md5 *buf, size_t i, uint32_t f, uint32_t g )
 {
 	uint32_t r[] = {7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
 		5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
 		4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
 		6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21};
-
-
 	uint32_t k[] = {
 		0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
 		0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
@@ -283,120 +274,113 @@ void	ft_md5(t_md5	*md5)
 		0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
 		0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
 		0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};
+	unsigned int temp;
+	unsigned int t;
+	
+	temp = buf->d;	
+	t = buf->a + f + k[i] + buf->pt[g];
+	buf->d = buf->c;
+	buf->c = buf->b;
+	t = (t << r[i]) | (t >> (32 - r[i]));
+	buf->b = buf->b + t;
+	buf->a = temp;
+}
 
-	/*
+void	init_buffer(t_buffer_md5 *buf)
+{
+	buf->a = 0x67452301;
+	buf->b = 0xefcdab89;
+	buf->c = 0x98badcfe;
+	buf->d = 0x10325476;
+}
 
-	   int i = 0; 
-	   while (i < 64)
-	   {
-	   printf("%x ", (unsigned)msg[i]);
-	   i++;
-	   }
-	   printf("\n");
-	   */
-	unsigned int h0;
-	unsigned int h1;
-	unsigned int h2;
-	unsigned int h3;
+t_buffer_md5	norm_val(uint32_t h1, uint32_t h2, uint32_t h3, uint32_t h4)
+{
+	t_buffer_md5 ret;
 
-	h0 = 0x67452301;
-	h1 = 0xefcdab89;
-	h2 = 0x98badcfe;
-	h3 = 0x10325476;
+	ret.a = h1;
+	ret.b = h2;
+	ret.c = h3;
+	ret.d = h4;
+	return (ret);
+}
 
-	t_buffer_md5 buf;
+void	add_buffer(t_buffer_md5 *buf, t_buffer_md5 temp)
+{
+	buf->a += temp.a;
+	buf->b += temp.b;
+	buf->c += temp.c;
+	buf->d += temp.d;
+}
 
-	size_t z = 0;
-	while (z < md5->total_size_msg/*len_message*/)
+void	compress_block(t_buffer_md5 temp_val_buf, t_buffer_md5 *buf, int round)
+{
+	int bit;
+
+	bit = 0;	
+	print_block_64( (uint8_t*) buf->pt);
+	while (bit < 64)
 	{
-		buf.a = h0; 
-		buf.b = h1; 
-		buf.c = h2; 
-		buf.d = h3; 
+		if (bit < 16)
+			ft_F(buf, bit);
+		else if (bit < 32)
+			ft_G(buf, bit);
+		else if (bit < 48)
+			ft_H(buf, bit);
+		else
+			ft_I(buf, bit);
+		swap_byts(buf, bit, buf->f, buf->g);
+		bit++;
+	}
+	add_buffer(buf, temp_val_buf);
+	print_register(*buf, round);
+}
 
+void	ft_md5(t_md5	*md5)
+{
+	size_t offset;
+	t_buffer_md5 buf;
+	t_buffer_md5 temp_val_buf;
 
-		print_register(buf);
-
-		//unsigned int *pt = (unsigned int *)msg + z;
-		unsigned int *pt = (unsigned int *)(md5->prepared_msg /*msg*/ + z);
-
-		//	pt = pt + z * 2;
-		print_block_64(md5->prepared_msg /*msg*/ + z);
-
-		int i = 0;
-		//print_msg_new_format(pt);
-		print_block_64( (uint8_t*) pt);
-
-		while (i < 64)
-		{
-			unsigned int f, g;
-
-			if (i < 16)
-			{
-				f = ft_F(buf);
-				g = ft_g_1(i);
-			}
-			else if ( i < 32)
-			{
-				f = ft_G(buf);
-				g = ft_g_2(i);
-			}
-			else if ( i < 48)
-			{
-				f = ft_H(buf);
-				g = ft_g_3(i);
-			}
-			else
-			{
-				f = ft_I(buf);
-				g = ft_g_4(i);
-			}
-
-			unsigned int temp = buf.d;
-			buf.d = buf.c;
-			buf.c = buf.b;
-			unsigned int t = buf.a + f + k[i] + pt[g];
-			//t = (t << r[i]) | (t >> 32 - r[i]);
-			t = (t << r[i]) | (t >> (32 - r[i]));
-			buf.b = buf.b + t;
-			buf.a = temp;
-
-			printf("%d f[%x]  g[%d]   msg = %x\n",i, f, g, (unsigned int)pt[g]);
-			printf("f[%x]  k[%x] w[%x] r[%x]\n", f, k[i] , pt[g], r[i]);
-			printf("a[%x]  b[%x] c[%x] d[%x]\n\n\n", buf.a, buf.b , buf.c, buf.d);
-
-			i++;
-		}
-
-		h0 += buf.a;
-		h1 += buf.b;
-		h2 += buf.c;
-		h3 += buf.d;
-
-		printf("h0[%x]  h1[%x] h2[%x] h3[%x]\n\n\n", h0, h1 , h2, h3);
-		z = z + 64;
+	ft_memset(&buf, 0 , sizeof(buf));
+	offset = 0;
+	temp_val_buf =  norm_val(H0, H1, H2, H3);
+	print_register(temp_val_buf, (offset / 64) - 1);
+	print_register(buf, (offset / 64) - 1);
+	
+	add_buffer(&buf, temp_val_buf);
+	print_register(buf, (offset / 64) - 1);
+	while (offset < md5->total_size_msg)
+	{
+		temp_val_buf =  norm_val(buf.a, buf.b, buf.c, buf.d);
+		buf.pt = (uint32_t *)(md5->prepared_msg + offset);
+		compress_block(temp_val_buf, &buf, offset % 64);
+		offset = offset + 64;
 		printf("\n---------------------------------------------------------\n\n");
 	}
-
-	buf.a = h0; 
-	buf.b = h1; 
-	buf.c = h2; 
-	buf.d = h3; 
-
-
-	print_register(buf);
+	print_register(buf, (offset / 64) - 1);
 	free (md5->prepared_msg);
+}
+
+void	run_md5(char *str)
+{
+	printf("message to hash [%s] \n", str);
+	t_md5	md5;
+	init_md5(&md5, str);
+	ft_md5(&md5);	
 
 }
 
+
 void	ft_invalide(char *input)
 {
-	printf("ft_ssl: Error: '%s' is an invalid command.\n", input);
-	printf("Standard commands:\n");
-	printf("Message Digest commands:\n");
-	printf("md5\n");
-	printf("sha256\n");
-	printf("Cipher commands:\n");
+	printf("ft_ssl: Error: '%s' is an invalid command.\n\n", input);
+	printf("\n - Standard commands:\n");
+	printf("\n - Message Digest commands:\n");
+	printf("\tmd5\n");
+	printf("\tsha256\n");
+	printf("\n - Cipher commands:\n");
+	exit(0);
 }
 
 void	usage()
@@ -404,28 +388,216 @@ void	usage()
 	printf("usage: ft_ssl command [command opts] [command args]\n");
 }
 
-int main (int argc, char ** argv)
+
+
+/*
+ *
+ * faire une option pour diferencier la source <file/stdin>
+ *
+ * pour stocker les options
+ *
+ * */
+
+/**********************************************************************************/
+/*
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
+
+int		ft_open_file(char *url_file)
+{	
+	int fd;
+
+	if (url_file == NULL)
+		return (-1);
+	fd = open(url_file, O_RDONLY);
+	if (fd < 0)
+		return (-1);
+	return (fd);
+}
+i
+int	is_option(char *str)
 {
-/*	(void ) argv;
-	(void) argc;
 
-	char *line = NULL;
-
-	get_next_line(0, &line);
-
-	printf(line);
-
-	printf("%s\n", argv[1]);
-
-	*/
-	t_md5	md5;
-
-	if (argc != 2)
-	{
-		printf("Usage md5\n");
-		return (0);
-	}
-	init_md5(&md5, argv[1]);
-	ft_md5(&md5);	
+	(void) str;
 	return (0);
 }
+
+void	set_option(char *str)
+{
+	(void) str;
+}
+void	parss_args(char **argv)
+{
+	int i = 0;
+
+	while (argv[i])
+	{
+		if (is_option(argv[i]))
+			set_option(argv[i]);
+		else if (ft_open_file(argv[i]) > 2)
+			printf("%s    ok \n", argv[i++]);
+		else
+		{
+			printf("%s: No such file or directory\n", argv[i++]);
+			exit(0);
+		}
+	}
+}
+*/
+/**********************************************************************************/
+int	is_standard_commande(char *cmd)
+{
+	if (!strcmp(cmd, "rsa"))
+		return (0);
+	return (0);
+}
+
+int	is_cipher_commande(char *cmd)
+{
+	if (!strcmp(cmd, "des"))
+		return (0);
+	return (0);
+}
+
+int	is_md_commande(char *cmd)
+{
+	if (!strcmp(cmd, "md5") || !strcmp(cmd, "sha256"))
+		return (1);
+	return (0);
+}
+/*
+int	is_commande(char *cmd)
+{
+	if (is_md_commande(cmd))
+	
+}
+*/
+
+size_t	ft_matlen(char **mat)
+{
+	size_t length;
+
+	length = 0;
+	if (mat)
+		while (*mat++)
+			length++;
+	return (length);
+}
+
+void	md(t_general *gen)//har *cmd, char **argv)
+{
+	int i = 0;
+	// while is there a file read it and process it 
+	printf("cmd = %s \n", gen->cmd);
+	if (!ft_matlen(gen->url_file))
+	{
+		printf("read from STDIN\n");
+		printf("not finished yet ....read from io\n");
+		if (!strcmp("md5", gen->cmd))
+			run_md5("a");
+		else if (!strcmp("sha256", gen->cmd))
+			printf("not finished yet ....read from io\n");		
+	}else
+	{
+		while (gen->url_file[i])
+		{
+			if (!strcmp("md5", gen->cmd))
+			{	printf("not finished yet ....read from io\n");
+				run_md5("a");
+			}else if (!strcmp("sha256", gen->cmd))
+			{	printf("not finished yet ....read from io\n");
+			}		// read the argv 1
+			// open file			if error -> 
+			// read the file		if error ->
+			// send the text to md5
+		//	printf("[%s]\n", argv[i]);
+			i++;
+		}
+	}
+}
+
+
+void	get_input_param(t_general *gen, char **arg)
+{
+//	parsing option    [option ]  files
+	(void) arg;
+	(void) gen;
+	gen->cmd = arg[0];
+}
+
+int	run(char **argv)
+{
+	t_general gen;
+	if (is_md_commande(argv[0]))
+	{
+		get_input_param(&gen, argv );
+		printf("run md commande\n");
+		// check options 
+		// get files / input
+		md(&gen);
+		return (1);
+	}else if(is_cipher_commande(argv[0]))
+	{
+		//get_input_param(&general, argv + 1);
+		// check options 
+		// get files / input
+		printf("run cipher commande\n");
+		return (1);
+	}else if(is_standard_commande(argv[0]))
+	{
+		//get_input_param(&general, argv + 1);
+		// check options 
+		// get files / input
+		printf("run standard commande\n");
+		return (1);
+	}else
+		return (0);
+}
+
+int main (int argc, char ** argv)
+{
+	if (argc < 2)
+	{
+		usage();
+		return (0);
+	}
+	if (!run(argv + 1))
+		ft_invalide(argv[1]);
+	return (0);
+	/*
+	if (!(id_cmd = is_commande(argv[1])))
+	if ()
+	printf("its a message digest commande\n");
+
+
+//	parss_args(argv);
+*/	/*
+	char *line = NULL;
+	get_next_line(0, &line);
+	printf(line);
+	printf("%s\n", argv[1]);
+
+*/
+	/*
+	*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ *
+ * faire le toure de toutes les variables pour voir si je les initialisent toutes ou pas
+ *
+ * */
