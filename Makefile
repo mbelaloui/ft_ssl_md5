@@ -7,8 +7,26 @@ FLAGES			=  -Wall -Wextra -Werror -c
 #					  -fno-omit-frame-pointer\
 
 DIR_MD5			= md5
-SRC_MD5			= md5_v2.c
+SRC_MD5			= md5.c compress_block_md5.c compression_fonction.c
 SRCS_MD5		= $(addprefix $(DIR_MD5)/, $(SRC_MD5))
+
+DIR_INPUT		= input
+SRC_INPUT		= read_data.c
+SRCS_INPUT		= $(addprefix $(DIR_INPUT)/, $(SRC_INPUT))
+
+DIR_PARS		= parsing
+SRC_PARS		= is.c  ft_error.c manage_args.c
+SRCS_PARS		= $(addprefix $(DIR_PARS)/, $(SRC_PARS))
+
+DIR_OUTPUT		= output
+SRC_OUTPUT		= print_block_64.c
+SRCS_OUTPUT		= $(addprefix $(DIR_OUTPUT)/, $(SRC_OUTPUT))
+
+
+DIR_SERIALIZE		= serialize
+SRC_SERIALIZE		= serialization.c
+SRCS_SERIALIZE		= $(addprefix $(DIR_SERIALIZE)/, $(SRC_SERIALIZE))
+
 
 INC_DIR			= ./inc/
 
@@ -18,8 +36,8 @@ LIBFT_DIR		= libft
 
 LIBFT			= libft.a
 
-SRCS			= md5_v2.c #$(SRCS_MD5) #$(SRCS_DISPLAY) $(SRCS_ERROR_MSG) $(SRCS_MAP)\
-		$(SRCS_PARSING) $(SRCS_ANT)
+SRCS			= main.c $(SRCS_MD5)  $(SRCS_PARS) $(SRCS_OUTPUT) $(SRCS_SERIALIZE)\
+				$(SRCS_INPUT)#		$(SRCS_PARSING) $(SRCS_ANT)
 
 RED				= \033[31m
 GREEN			= \033[32m
@@ -32,15 +50,13 @@ OBJS			= $(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
 all				: $(NAME)
 
 $(NAME)			: $(LIBFT) $(OBJS_DIR) $(OBJS)
-	@echo $(SRCS)
-	@echo $(OBJS)
-	@gcc $(OBJS) -L $(LIBFT_DIR) -lft -o $(NAME)
+	@gcc $(OBJS) -L $(LIBFT_DIR) -lft -o $(NAME) -I $(INC_DIR)
 	@echo "$(GREEN)$(NAME) has been successfully created !$(WHITE)."
 	@#@@say "$(NAME) has been successfully created !"
 
-$(OBJS_DIR)%.o	: src/%.c
+$(OBJS_DIR)%.o	: src/%.c 
 	@echo "$< $(GREEN) compiled $(WHITE)"
-	@echo "\033[1A \033[2K \033[A"
+	#@echo "\033[1A \033[2K \033[A"
 	@gcc $(FLAGES) $< -o $@ -I $(INC_DIR)
 
 $(LIBFT)		:
@@ -50,8 +66,11 @@ $(LIBFT)		:
 
 $(OBJS_DIR)		:
 	@mkdir -p $(OBJS_DIR);
-	@echo "$< $(GREEN) OBJS Dir  $(WHITE)"
-
+	@mkdir -p $(OBJS_DIR)$(DIR_MD5);
+	@mkdir -p $(OBJS_DIR)$(DIR_INPUT);
+	@mkdir -p $(OBJS_DIR)$(DIR_PARS);
+	@mkdir -p $(OBJS_DIR)$(DIR_OUTPUT);
+	@mkdir -p $(OBJS_DIR)$(DIR_SERIALIZE);
 
 clean			:
 	@make -C $(LIBFT_DIR) clean

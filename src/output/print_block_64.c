@@ -1,27 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_error_exe.c                                     :+:      :+:    :+:   */
+/*   print_block_64.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/09/26 18:39:25 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 16:14:08 by mbelalou         ###   ########.fr       */
+/*   Created: 2019/08/10 17:48:38 by mbelalou          #+#    #+#             */
+/*   Updated: 2019/08/10 18:00:55 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/printf.h"
+#include "md5.h"
 
-void	ft_error_exe(int error)
+/*
+
+ not used 
+*/
+
+void	print_block_64(uint8_t* msg)
 {
-	ft_printf("{red}Error execution{eoc} : ");
-	if (error == ERROR_NOT_ENOUGH_MEM)
-		ft_printf("not enough memory for malloc\n");
-	else if (error == ERROR_CAN_NOT_OPEN_FILE)
-		ft_printf("can't open file\n");
-	else if (error == ERROR_CAN_NOT_CEART_FILE)
-		ft_printf("can't creat file\n");
-	else
-		ft_printf("error id %d\n", error);
-	exit(error);
+	int i;
+
+	i = 0; 
+	while (i < 64)
+	{
+		ft_printf("%x ", msg[i]);
+		i++;
+	}
+	ft_printf("\n");
 }
