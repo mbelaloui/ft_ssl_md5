@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:55:12 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 17:59:27 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/10 20:00:00 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	serialization_md5(t_general *gen, t_md5 *md5, char *input)
 {
 	if (gen->v)
 		ft_printf("Calcule nbr bits to add to get ==> [(len string)"
-		"% 512 = 0]\n");
+		"%% 512 = 0]\n");
 	md5->input_msg = (uint8_t *)input;
 	md5->size_input_msg = ft_strlen((char *)md5->input_msg);
 	md5->size_prepared_msg = get_size_message_512(md5->size_input_msg);

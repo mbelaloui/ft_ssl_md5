@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:31:38 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 18:03:44 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/10 20:21:40 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ void	ft_md5(t_general *gen, t_md5 *md5, char *url_file)
 	t_buffer_md5	temp_val_buf;
 	size_t			offset;
 
-	ft_memset(&buf, 0, sizeof(buf));
 	offset = 0;
+	ft_bzero(&buf, sizeof(buf));
 	temp_val_buf = norm_val(H0, H1, H2, H3);
 	add_buffer(&buf, temp_val_buf);
 	while (offset < md5->total_size_msg)
@@ -129,7 +129,6 @@ void	ft_md5(t_general *gen, t_md5 *md5, char *url_file)
 		temp_val_buf = norm_val(buf.a, buf.b, buf.c, buf.d);
 		buf.pt = (uint32_t *)(md5->prepared_msg + offset);
 		compress_block_md5(temp_val_buf, &buf);
-//		compress_block_md5(temp_val_buf, &buf, offset % 64);
 		offset = offset + 64;
 	}
 	put_result_md5(gen, buf, url_file);
@@ -156,6 +155,9 @@ void	md5(t_general *gen)
 	else
 	{
 		str = read_stdin();
+		if (!str)
+			ft_error_exe(ERROR_NOT_ENOUGH_MEM);
+		ft_printf("str in [%s]\n", str);
 		serialization_md5(gen, &md5, str);
 		ft_md5(gen, &md5, gen->url_file->data);
 	}

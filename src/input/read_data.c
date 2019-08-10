@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:47:58 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 17:47:59 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/10 20:16:30 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ char	*read_file(char *url_file)
 	file = NULL;
 	if ((fd = ft_open_r_file(url_file)) > 0)
 	{
-		ret = 0;
 		ft_bzero(buf, BUFF_SIZE);
 		while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
 		{
