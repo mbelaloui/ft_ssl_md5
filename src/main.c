@@ -50,7 +50,7 @@ int		run(t_general *gen, char **argv)
 	else if (is_des_funtions(argv[0]))
 	{
 		if (gen->v)
-			printf("Data Encryption Standard\n");
+			ft_printf("Data Encryption Standard\n");
 		return (1);
 	}
 	else if (is_standard_funtions(argv[0]))
@@ -63,9 +63,20 @@ int		run(t_general *gen, char **argv)
 		return (0);
 }
 
+void		free_gen(t_general *gen)
+{
+	t_charlist *pt;
+
+	pt = gen->url_file;
+	ft_put_list_charlist(pt);
+	ft_printf("pass par la \n");
+
+}
+
 int		main(int argc, char **argv)
 {
 	t_general	gen;
+	t_charlist	*pt_temp;
 
 	if (argc < 2)
 	{
@@ -74,8 +85,9 @@ int		main(int argc, char **argv)
 	}
 	ft_bzero(&gen, sizeof(gen));
 	parss_args(&gen, argv + 1);
+	pt_temp = (gen.url_file);
 	if (!run(&gen, argv + 1))
 		ft_invalide_cmd(argv[1]);
-	//free  gen {cmd, url_file}
+	ft_dell_list_charlist(&pt_temp);
 	return (0);
 }

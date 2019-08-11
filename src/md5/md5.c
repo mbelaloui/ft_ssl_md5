@@ -149,6 +149,7 @@ void	md5(t_general *gen)
 				ft_error(ERROR_CAN_NOT_OPEN_FILE, gen->url_file->data);
 			serialization_md5(gen, &md5, str);
 			ft_md5(gen, &md5, gen->url_file->data);
+			ft_strdel(&str);
 			gen->url_file = gen->url_file->next;
 		}
 	}
