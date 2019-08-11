@@ -50,6 +50,12 @@ OBJS			= $(addprefix $(OBJS_DIR), $(SRCS:.c=.o))
 all				: $(NAME)
 
 $(NAME)			: $(LIBFT) $(OBJS_DIR) $(OBJS)
+	@gcc $(OBJS) -L $(LIBFT_DIR) -lft -o $(NAME) -I $(INC_DIR)
+	@echo "$(GREEN)$(NAME) has been successfully created !$(WHITE)."
+	@#@@say "$(NAME) has been successfully created !"
+
+
+debug			: $(LIBFT) $(OBJS_DIR) $(OBJS)
 	@gcc -fsanitize=address $(OBJS) -L $(LIBFT_DIR) -lft -o $(NAME) -I $(INC_DIR)
 	@echo "$(GREEN)$(NAME) has been successfully created !$(WHITE)."
 	@#@@say "$(NAME) has been successfully created !"
