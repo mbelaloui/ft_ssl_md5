@@ -97,6 +97,8 @@ void	put_result_md5(t_general *gen, t_buffer_md5 buf, char *url_file)
 	(void)gen;
 	if (url_file)
 		ft_printf("MD5(%s)= ", url_file);
+	else
+		ft_printf("(stdin)= ", url_file);
 	p = (uint8_t *)&buf.a;
 	ft_printf("%2.2x%2.2x%2.2x%2.2x", p[0], p[1], p[2], p[3]);
 	p = (uint8_t *)&buf.b;
@@ -106,13 +108,6 @@ void	put_result_md5(t_general *gen, t_buffer_md5 buf, char *url_file)
 	p = (uint8_t *)&buf.d;
 	ft_printf("%2.2x%2.2x%2.2x%2.2x\n", p[0], p[1], p[2], p[3]);
 }
-
-/*
-**	print_register(temp_val_buf, (offset / 64) - 1);
-**	print_register(buf, (offset / 64) - 1);
-**	print_register(buf, (offset / 64) - 1);
-**	print_register(buf, (offset / 64) - 1);
-*/
 
 void	ft_md5(t_general *gen, t_md5 *md5, char *url_file)
 {
@@ -158,8 +153,8 @@ void	md5(t_general *gen)
 		str = read_stdin();
 		if (!str)
 			ft_error_exe(ERROR_NOT_ENOUGH_MEM);
-		ft_printf("str in [%s]\n", str);
 		serialization_md5(gen, &md5, str);
-		ft_md5(gen, &md5, gen->url_file->data);
+		ft_md5(gen, &md5, NULL);
+		ft_strdel(&str);
 	}
 }
