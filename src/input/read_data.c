@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:47:58 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 20:16:30 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/15 13:49:54 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,3 +53,49 @@ char	*read_file(char *url_file)
 	}
 	return (file);
 }
+/*
+
+void	*ft_memjoin(char *dest, size_t start, const char *src, size_t size)
+{
+	size_t			pt;
+	unsigned char	*temp_dest;
+	unsigned char	*temp_src;
+
+	temp_dest = (unsigned char *)dest;
+	temp_src = (unsigned char *)src;
+	pt = 0;
+	while (pt < size)
+	{
+		temp_dest[pt + start] = temp_src[pt];
+		pt++;
+	}
+	return (dest);
+
+	char	*result;
+	size_t			pt;
+
+	result = NULL;
+	if (src)
+	{
+		result = ft_strnew(start + size);
+		if (result == NULL)
+			return (NULL);
+		pt = 0;
+		if (start)
+		while (pt < start)
+		{
+			result[pt] = dest[pt];
+			pt++;
+		}
+		while (pt < size)
+		{
+			result[pt] = src[pt];
+			pt++;
+		}
+		return (result);
+	}
+	return (result);
+}
+
+
+*/

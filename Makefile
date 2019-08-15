@@ -10,6 +10,13 @@ DIR_MD5			= md5
 SRC_MD5			= md5.c compress_block_md5.c compression_fonction.c
 SRCS_MD5		= $(addprefix $(DIR_MD5)/, $(SRC_MD5))
 
+DIR_SHA256		= sha256
+SRC_SHA256		= sha.c
+SRCS_SHA256		= $(addprefix $(DIR_SHA256)/, $(SRC_SHA256))
+
+
+
+
 DIR_INPUT		= input
 SRC_INPUT		= read_data.c
 SRCS_INPUT		= $(addprefix $(DIR_INPUT)/, $(SRC_INPUT))
@@ -37,7 +44,7 @@ LIBFT_DIR		= libft
 LIBFT			= libft.a
 
 SRCS			= main.c $(SRCS_MD5)  $(SRCS_PARS) $(SRCS_OUTPUT) $(SRCS_SERIALIZE)\
-				$(SRCS_INPUT)#		$(SRCS_PARSING) $(SRCS_ANT)
+				$(SRCS_INPUT) $(SRCS_SHA256)#		$(SRCS_PARSING) $(SRCS_ANT)
 
 RED				= \033[31m
 GREEN			= \033[32m
@@ -77,6 +84,7 @@ $(OBJS_DIR)		:
 	@mkdir -p $(OBJS_DIR)$(DIR_PARS);
 	@mkdir -p $(OBJS_DIR)$(DIR_OUTPUT);
 	@mkdir -p $(OBJS_DIR)$(DIR_SERIALIZE);
+	@mkdir -p $(OBJS_DIR)$(DIR_SHA256);
 
 clean			:
 	@make -C $(LIBFT_DIR) clean

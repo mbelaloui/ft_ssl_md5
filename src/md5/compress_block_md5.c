@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:47:14 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 17:49:16 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/15 15:18:59 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ void	compress_block_md5(t_buffer_md5 temp_val_buf, t_buffer_md5 *buf)
 	while (bit < 64)
 	{
 		if (bit < 16)
-			ft_f(buf, bit);
+			md5_f(buf, bit);
 		else if (bit < 32)
-			ft_g(buf, bit);
+			md5_g(buf, bit);
 		else if (bit < 48)
-			ft_h(buf, bit);
+			md5_h(buf, bit);
 		else
-			ft_i(buf, bit);
+			md5_i(buf, bit);
 		swap_byts(buf, bit, buf->f, buf->g);
 		bit++;
 	}
-	add_buffer(buf, temp_val_buf);
+	add_buffer_16byts(buf, temp_val_buf);
 }

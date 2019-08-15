@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:22:29 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 18:00:21 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/15 15:13:50 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ void	print_gen(t_general *gen)
 void	hash(t_general *gen)
 {
 	if (!strcmp("md5", gen->cmd))
-		md5(gen);
+		ft_md5(gen);
 	else if (!strcmp("sha256", gen->cmd))
-		md5(gen);
+		ft_sha256(gen);
 	else
 		ft_printf("Not yet Implemented");
 }
 
-int		run(t_general *gen, char **argv)
+static  int		run(t_general *gen, char **argv)
 {
 	if (is_hash_funtions(argv[0]))
 	{

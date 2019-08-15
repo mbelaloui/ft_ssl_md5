@@ -6,7 +6,7 @@
 /*   By: mbelalou <mbelalou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/10 17:55:12 by mbelalou          #+#    #+#             */
-/*   Updated: 2019/08/10 20:00:00 by mbelalou         ###   ########.fr       */
+/*   Updated: 2019/08/15 15:01:28 by mbelalou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int		get_size_message_512(size_t initial_len)
 	return (ret / 8);
 }
 
-void	get_new_message_md5(t_general *gen, t_md5 *md5)
+void	get_new_message_512(t_general *gen, t_buff *md5)
 {
 	int bits_size_src_msg;
 
@@ -38,7 +38,7 @@ void	get_new_message_md5(t_general *gen, t_md5 *md5)
 	&bits_size_src_msg, 4);
 }
 
-void	serialization_md5(t_general *gen, t_md5 *md5, char *input)
+void	serialization_512(t_general *gen, t_buff *md5, char *input)
 {
 	if (gen->v)
 		ft_printf("Calcule nbr bits to add to get ==> [(len string)"
@@ -50,7 +50,7 @@ void	serialization_md5(t_general *gen, t_md5 *md5, char *input)
 	if (gen->v)
 		ft_printf("Initial message len %lld bits\tFinal size = %lld bits \n",
 		md5->size_input_msg * 8, md5->total_size_msg * 8);
-	get_new_message_md5(gen, md5);
+	get_new_message_512(gen, md5);
 	if (!md5->prepared_msg)
 		ft_error_exe(ERROR_NOT_ENOUGH_MEM);
 }
