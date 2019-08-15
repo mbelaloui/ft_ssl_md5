@@ -84,7 +84,7 @@ void	init_k_md5(uint32_t *k)
 	init_k_md5_part_2(k);
 }
 
-void	init_r_md5_part_2(uint32_t *k)
+static void	init_r_md5_part_2(uint32_t *k)
 {
 	set_val(k, 4, 11, 32);
 	set_val(k, 16, 23, 34);
@@ -104,7 +104,7 @@ void	init_r_md5_part_2(uint32_t *k)
 	set_val(k, 15, 21, 62);
 }
 
-void	init_r_md5_part_1(uint32_t *k)
+static void	init_r_md5_part_1(uint32_t *k)
 {
 	set_val(k, 7, 12, 0);
 	set_val(k, 17, 22, 2);
@@ -124,7 +124,7 @@ void	init_r_md5_part_1(uint32_t *k)
 	set_val(k, 14, 20, 30);
 }
 
-void	init_r_md5(uint32_t *k)
+static void	init_r_md5(uint32_t *k)
 {
 	init_r_md5_part_1(k);
 	init_r_md5_part_2(k);
