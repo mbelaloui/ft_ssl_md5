@@ -24,7 +24,11 @@ void	print_block_64(uint8_t* msg)
 	i = 0; 
 	while (i < 64)
 	{
-		ft_printf("%x ", msg[i]);
+		ft_printf("%.2x", msg[i]);
+		if (i != 0)
+			if (((i + 1) % 4) == 0)
+				//ft_printf(" [i == %d] ", i);
+				ft_printf("  ");
 		i++;
 	}
 	ft_printf("\n");
