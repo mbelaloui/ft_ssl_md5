@@ -29,14 +29,14 @@ void    norm_val_part2(t_buffer_sha256	*buf, uint32_t h1, uint32_t h2, uint32_t 
 void    norm_val_part3(t_buffer_sha256	*buf, uint32_t h1, uint32_t h2)
 {
 	buf->g = h1;
-    buf->h = h2;
+	buf->h = h2;
 }
 
 static  void    norm_val(t_buffer_sha256	*buf)
 {
     //buf = NULL;
     norm_val_part1(buf, SHA256_H0, SHA256_H1, SHA256_H2);
-    norm_val_part2(buf, SHA256_H3, SHA256_H5, SHA256_H5);
+    norm_val_part2(buf, SHA256_H3, SHA256_H4, SHA256_H5);
     norm_val_part3(buf, SHA256_H6, SHA256_H7);
 }
 
@@ -67,7 +67,7 @@ void	set_buffer_32byts(t_buffer_sha256 *buf, t_buffer_sha256 temp)
 
 uint32_t right_rot(uint32_t a, int b)
 {
-    return (((a) >> (b)) | ((a) << (32-(b))));
+    return ((a >> b) | (a << (32-b)));
 }
 /*
 uint32_t left_rot(uint32_t a, int b)
@@ -223,38 +223,53 @@ uint32_t k[64] = {
 		//swap_byts_sha256(buf, bit, buf->f, buf->g);
 		bit++;
 	}
+//	put_result_sha256(NULL, *buf, "url_file");
+//	put_result_sha256(NULL, *temp_val_buf, "url_file");
+	
+//	put_result_sha256(gen, temp_val_buf, "url_file");
 
+//	add_buffer_32byts(&temp_val_but, *buf);
 //	add_buffer_32byts(buf, *temp_val_buf);
 }
+/*
+static	void	put_msg(uint8_t *msg)
+{
+	int i = 0;
 
-
+//	pt = (uint32_t *)msg
+	while (i < 64)
+	{
+		ft_printf("[%x]\t", (uint32_t)msg[i]);
+		i+= 4;
+	}
+}
+*/
 static  void	run(t_general *gen, t_buff *sha, char *url_file)
 {
 	t_buffer_sha256	buf;
 	t_buffer_sha256	temp_val_buf;
 	size_t			offset;
 
+//	put_msg(sha->prepared_msg);
 	offset = 0;
 	ft_bzero(&buf, sizeof(buf));
-	put_result_sha256(gen, buf, url_file);
 	norm_val(&temp_val_buf);
-
-	put_result_sha256(gen, temp_val_buf, url_file);
-
 
 	add_buffer_32byts(&buf, temp_val_buf);
 
+	put_result_sha256(gen, temp_val_buf, url_file);
 	put_result_sha256(gen, buf, url_file);
 
+//	put_result_sha256(gen, buf, url_file);
 ft_printf("\n------------------------start loop---------------------------\n");
 
-	set_buffer_32byts(&temp_val_buf, buf);
+	//set_buffer_32byts(&temp_val_buf, buf);
 
-	put_result_sha256(gen, temp_val_buf, url_file);
+//	put_result_sha256(gen, temp_val_buf, url_file);
 	buf.pt = (uint32_t *)(sha->prepared_msg + offset);
 	compress_block_sha256(&temp_val_buf, &buf);
 
-	add_buffer_32byts(&buf, temp_val_buf);
+//	add_buffer_32byts(&buf, temp_val_buf);
 	put_result_sha256(gen, buf, url_file);
 	
 	put_result_sha256(gen, temp_val_buf, url_file);
