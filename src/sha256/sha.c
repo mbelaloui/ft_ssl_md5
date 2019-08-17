@@ -104,16 +104,16 @@ uint32_t	sha256_s0(uint32_t x)
 
 uint32_t	sha256_s1(uint32_t x)
 {
-    return(right_rot(x,17) ^ right_rot(x,19) ^ right_rot(x,10));
+    return(right_rot(x,17) ^ right_rot(x,19) ^  (x >> 10));
 }
 
 
 
-void	put_result_sha256(t_general *gen, t_buffer_sha256 buf, char *url_file)
+void	put_result_sha256( t_buffer_sha256 buf, char *url_file)
 {
 //	uint8_t *p;
 	(void) url_file;
-	(void)gen;
+//	(void)gen;
 
 
 	ft_printf("%.8x\t%.8x\t%.8x\t%.8x\t%.8x\t%.8x\t%.8x\t%.8x\n", buf.a, buf.b, buf.c, buf.d, buf.e, buf.f, buf.g, buf.h);
@@ -221,6 +221,7 @@ uint32_t k[64] = {
         temp_val_buf->b = temp_val_buf-> a;
         temp_val_buf->a = t1 + t2;
 		//swap_byts_sha256(buf, bit, buf->f, buf->g);
+	put_result_sha256(*temp_val_buf, "url_file");
 		bit++;
 	}
 //	put_result_sha256(NULL, *buf, "url_file");
@@ -273,15 +274,16 @@ ft_printf("\n\t\t----------- message to parss ---------------------------\n");
 ft_printf("\n\t\t[%s]\n", (uint8_t *)process_buf.pt);
 	
 ft_printf("\n\t\t----------- hash variable defore ---------------------------\n");
-	put_result_sha256(gen, first_val_buf, url_file);
+ft_printf("%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t\n", "A", "B", "C", "D", "E", "F", "G", "H");
+	put_result_sha256(first_val_buf, url_file);
 //	compress_block_sha256(&temp_val_buf, &buf);
 	compress_block_sha256(&first_val_buf,(uint8_t *) process_buf.pt);
 
 ft_printf("\n\t\t----------- hash variable after ---------------------------\n");
-	put_result_sha256(gen, first_val_buf, url_file);
+	put_result_sha256(first_val_buf, url_file);
 	add_buffer_32byts(&process_buf, first_val_buf);
 ft_printf("\n\t\t----------- process buf variable after ---------------------------\n");
-	put_result_sha256(gen, process_buf, url_file);
+	put_result_sha256(process_buf, url_file);
 //	add_buffer_32byts(&process_buf, first_val_buf);
 //	put_result_sha256(gen, process_buf, url_file);
 	
