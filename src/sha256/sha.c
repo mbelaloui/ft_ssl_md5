@@ -67,7 +67,7 @@ void	set_buffer_32byts(t_buffer_sha256 *buf, t_buffer_sha256 temp)
 
 uint32_t right_rot(uint32_t a, int b)
 {
-    return ((a >> b) | (a << (32-b)));
+    return ((a >> b) | (a << (32 - b)));
 }
 /*
 uint32_t left_rot(uint32_t a, int b)
@@ -166,7 +166,7 @@ static void	init_r_md5(uint32_t *k)
 }
 */
 
-void	compress_block_sha256(t_buffer_sha256 *temp_val_buf, uint8_t *msg)// t_buffer_sha256 *buf)
+void	compress_block_sha256(t_buffer_sha256 *temp_val_buf, uint32_t *msg)// t_buffer_sha256 *buf)
 {
 	int bit;
 uint32_t k[64] = {
@@ -186,16 +186,17 @@ uint32_t k[64] = {
     while(i < 64)
     {
         if (i < 16)
-		{
-			m [i] = msg[i];
-			//m[i] = (buf->pt[i] << 24) | (buf->pt[i + 1] << 16) | (buf->pt[i + 2] << 8) | (buf->pt[i + 3]);/
-		}
+		m [i] = msg[i];
         else
-		{
-			m[i] = sha256_s1(m[i - 2]) + m[i - 7] + sha256_s0(m[i - 15]) + m[i - 16];
-		}
+	{
+		m[i] = sha256_s1(m[i - 2]) + m[i - 7] + sha256_s0(m[i - 15]) + m[i - 16];
+	}
 		i++;
 	}
+
+	//ft_printf("[%s]\n", m);
+
+	//exit(0);
 /*		
     for (i = 0, j = 0; i < 16; ++i, j += 4)
 		m[i] = (buf->pt[j] << 24) | (buf->pt[j + 1] << 16) | (buf->pt[j + 2] << 8) | (buf->pt[j + 3]);
@@ -210,7 +211,9 @@ uint32_t k[64] = {
 //    (void) buf;
 	while (bit < 64)
 	{
-        uint32_t t1 = temp_val_buf->h + sha256_e1(temp_val_buf->e) + sha256_ch(temp_val_buf->e, temp_val_buf->f, temp_val_buf->g) + k[bit] + m[bit];
+	 ft_printf(" h[%x], e[%x]  E[%x] CH[%x]  K[%x]  W[%x] \n", temp_val_buf->h, temp_val_buf->e , sha256_e1(temp_val_buf->e), sha256_ch(temp_val_buf->e, temp_val_buf->f, temp_val_buf->g), k[bit], m[bit]);
+//	exit(0);
+ 	 uint32_t t1 = temp_val_buf->h + sha256_e1(temp_val_buf->e) + sha256_ch(temp_val_buf->e, temp_val_buf->f, temp_val_buf->g) + k[bit] + m[bit];
         uint32_t t2 = sha256_e0(temp_val_buf->a) + sha256_maj(temp_val_buf->a, temp_val_buf->b, temp_val_buf->c);
         temp_val_buf->h = temp_val_buf->g;
         temp_val_buf->g = temp_val_buf->f;
@@ -245,6 +248,26 @@ static	void	put_msg(uint8_t *msg)
 	}
 }
 */
+
+uint32_t	swap_w(uint32_t w)
+{
+	uint32_t	ret;
+	
+	ret = (w & 0xff000000) >> 24;// | (ret & 0x0000ffff) << 16;
+	ret = (w & 0x00ff0000) >> 8 | ret;// | (ret & 0x0000ffff) << 16;
+	ret = (w & 0x0000ff00) << 8 | ret;// | (ret & 0x0000ffff) << 16;
+	ret = (w & 0x000000ff) << 24 |ret;// | (ret & 0x00ff00ff) << 16;
+	
+
+//	ft_printf("[%.8b]  ->  [%b]\n",w,  ret);
+//	ft_printf("[%.8x]  ->  [%.8x]\n\t-------------------\n",w,  ret);
+
+	//exit(0);
+	return (ret);
+}
+
+
+
 static  void	run(t_general *gen, t_buff *sha, char *url_file)
 {
 	t_buffer_sha256	process_buf;
@@ -266,18 +289,25 @@ ft_printf("\n------------------------start loop---------------------------\n");
 	set_buffer_32byts(&process_buf, first_val_buf);
 ft_printf("\n\t\t----------- message---------------------------\n");
 	print_block_64(sha->prepared_msg);
-	//set_buffer_32byts(&temp_val_buf, buf);
 
-//	put_result_sha256(gen, temp_val_buf, url_file);
 	process_buf.pt = (uint32_t *)(sha->prepared_msg + offset);
+	for (int i = 0; i < 16; i ++)
+	{
+		process_buf.pt[i] = swap_w(process_buf.pt[i]);
+	}
+	//set_buffer_32byts(&temp_val_buf, buf);
+//	put_result_sha256(gen, temp_val_buf, url_file);
 ft_printf("\n\t\t----------- message to parss ---------------------------\n");
 ft_printf("\n\t\t[%s]\n", (uint8_t *)process_buf.pt);
 	
+//	exit(0);
 ft_printf("\n\t\t----------- hash variable defore ---------------------------\n");
 ft_printf("%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t%8.8s\t\n", "A", "B", "C", "D", "E", "F", "G", "H");
 	put_result_sha256(first_val_buf, url_file);
+
+//	exit(0);
 //	compress_block_sha256(&temp_val_buf, &buf);
-	compress_block_sha256(&first_val_buf,(uint8_t *) process_buf.pt);
+	compress_block_sha256(&first_val_buf, process_buf.pt);
 
 ft_printf("\n\t\t----------- hash variable after ---------------------------\n");
 	put_result_sha256(first_val_buf, url_file);
