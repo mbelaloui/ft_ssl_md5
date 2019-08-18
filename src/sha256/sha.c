@@ -168,6 +168,7 @@ static void	init_r_md5(uint32_t *k)
 
 void	compress_block_sha256(t_buffer_sha256 *temp_val_buf, uint32_t *msg)// t_buffer_sha256 *buf)
 {
+	print_block_64(msg) ;
 	int bit;
 uint32_t k[64] = {
 	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
@@ -259,8 +260,8 @@ uint32_t	swap_w(uint32_t w)
 	ret = (w & 0x000000ff) << 24 |ret;// | (ret & 0x00ff00ff) << 16;
 	
 
-//	ft_printf("[%.8b]  ->  [%b]\n",w,  ret);
-//	ft_printf("[%.8x]  ->  [%.8x]\n\t-------------------\n",w,  ret);
+	ft_printf("[%.8b]  ->  [%b]\n",w,  ret);
+	ft_printf("[%.8x]  ->  [%.8x]\n\t-------------------\n",w,  ret);
 
 	//exit(0);
 	return (ret);
@@ -287,8 +288,12 @@ static  void	run(t_general *gen, t_buff *sha, char *url_file)
 //	put_result_sha256(gen, buf, url_file);
 ft_printf("\n------------------------start loop---------------------------\n");
 	set_buffer_32byts(&process_buf, first_val_buf);
+//	print_block_64(sha->prepared_msg);
+
+	while (offset < sha->total_size_msg)
+	{
 ft_printf("\n\t\t----------- message---------------------------\n");
-	print_block_64(sha->prepared_msg);
+	print_block_64(sha->prepared_msg + offset) ;
 
 	process_buf.pt = (uint32_t *)(sha->prepared_msg + offset);
 	for (int i = 0; i < 16; i ++)
@@ -314,13 +319,16 @@ ft_printf("\n\t\t----------- hash variable after ---------------------------\n")
 	add_buffer_32byts(&process_buf, first_val_buf);
 ft_printf("\n\t\t----------- process buf variable after ---------------------------\n");
 	put_result_sha256(process_buf, url_file);
+		offset = offset + 64;
+
+	}
+
 //	add_buffer_32byts(&process_buf, first_val_buf);
 //	put_result_sha256(gen, process_buf, url_file);
 	
 //	put_result_sha256(gen, temp_val_buf, url_file);
 //	put_result_sha256(gen, temp_val_buf, url_file);
 	//exit(0);
-	//while (offset < sha->total_size_msg)
 	{
 //        add_buffer_32byts(&temp_val_buf, buf);
 
@@ -329,7 +337,6 @@ ft_printf("\n\t\t----------- process buf variable after ------------------------
 //		 = norm_val(buf.a, buf.b, buf.c, buf.d);
 /*		buf.pt = (uint32_t *)(sha->prepared_msg + offset);
 		
-		offset = offset + 64;
 */	}
 //	put_result_sha256(gen, temp_val_buf, url_file);
 

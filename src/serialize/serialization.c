@@ -38,7 +38,8 @@ void	get_new_message_512(t_general *gen, t_buff *md5)
 	//sha256
 	// i have to consider the bigedin format so i have to get the size of the representation of the len
 	// then make the eauqtion to get the good number of bits shift to the right 
-	ft_memcpy(md5->prepared_msg + md5->size_prepared_msg +7 , &bits_size_src_msg, 4);
+//	ft_memcpy(md5->prepared_msg + md5->size_prepared_msg +7 , &bits_size_src_msg, 4);
+	ft_memcpy(md5->prepared_msg + md5->size_prepared_msg +6 , &bits_size_src_msg, 4);
 
 	// md5	ft_memcpy(md5->prepared_msg + md5->size_prepared_msg,	&bits_size_src_msg, 4);
 }
