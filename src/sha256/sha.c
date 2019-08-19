@@ -168,7 +168,7 @@ static void	init_r_md5(uint32_t *k)
 
 void	compress_block_sha256(t_buffer_sha256 *temp_val_buf, uint32_t *msg)// t_buffer_sha256 *buf)
 {
-	print_block_64(msg) ;
+//	print_block_64((uint8_t *)msg) ;
 	int bit;
 uint32_t k[64] = {
 	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
@@ -300,6 +300,8 @@ ft_printf("\n\t\t----------- message---------------------------\n");
 	{
 		process_buf.pt[i] = swap_w(process_buf.pt[i]);
 	}
+
+//	exit(0);
 	//set_buffer_32byts(&temp_val_buf, buf);
 //	put_result_sha256(gen, temp_val_buf, url_file);
 ft_printf("\n\t\t----------- message to parss ---------------------------\n");
